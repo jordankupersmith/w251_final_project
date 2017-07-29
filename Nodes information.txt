@@ -6,5 +6,6 @@ To find disk location type
 fdisk -l
 
 Nodes list:
-column key: name of node, primary_ip, secondary_ip, password, dik location,  person who created it
-wikispark1 173.193.170.148 :  10.81.67.190 E55CvKjH /dev/xvdc: Jordan
+column key: name of node, primary_ip, secondary_ip, password, disk location,  person who created it
+wikispark1 	173.193.170.148		10.81.67.190 	E55CvKjH 	/dev/xvdc	Jordan
+wikispark2 	108.168.128.202		10.82.6.137	Bzv7eVAy	/dev/xvdc	Matt				
