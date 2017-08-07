@@ -108,115 +108,115 @@ $SPARK_HOME/sbin/start-slaves.sh
 https://www.ca.com/us/services-support/ca-support/ca-support-online/knowledge-base-articles.TEC1714429.html
 
 ### Installing Cassandra on single nodes
-Download and extract the package:
-cd /tmp
-wget http://mirror.cc.columbia.edu/pub/software/apache/cassandra/2.2.10/apache-cassandra-2.2.10-bin.tar.gz
-tar -zxf apache-cassandra-2.2.10-bin.tar.gz
+Download and extract the package: <br>
+cd /tmp <br>
+wget http://mirror.cc.columbia.edu/pub/software/apache/cassandra/2.2.10/apache-cassandra-2.2.10-bin.tar.gz <br>
+tar -zxf apache-cassandra-2.2.10-bin.tar.gz <br>
 
-Move it to a proper folder:
-sudo mv apache-cassandra-2.2.10/ /opt/
+Move it to a proper folder: <br>
+sudo mv apache-cassandra-2.2.10/ /opt/ <br>
 
-Next, make sure that the folders Cassandra accesses, such as the log folder, exists and that Cassandra has the right to write on it:
-sudo mkdir /var/lib/cassandra
-sudo mkdir /var/log/cassandra
-sudo mkdir /data/cassandra
-sudo chown -R $USER:$GROUP /var/lib/cassandra
-sudo chown -R $USER:$GROUP /var/log/cassandra
-sudo chown -R $USER:$GROUP /data/cassandra
+Next, make sure that the folders Cassandra accesses, such as the log folder, exists and that Cassandra has the right to write on it: <br>
+sudo mkdir /var/lib/cassandra <br>
+sudo mkdir /var/log/cassandra <br>
+sudo mkdir /data/cassandra <br>
+sudo chown -R $USER:$GROUP /var/lib/cassandra <br>
+sudo chown -R $USER:$GROUP /var/log/cassandra <br>
+sudo chown -R $USER:$GROUP /data/cassandra <br>
 
-To setup Cassandra environment variables, add the following lines to /etc/profile.d/cassandra.sh using vi or cat:
-export CASSANDRA_HOME=/opt/apache-cassandra-2.2.10
-export PATH=$PATH:$CASSANDRA_HOME/bin
+To setup Cassandra environment variables, add the following lines to /etc/profile.d/cassandra.sh using vi or cat: <br>
+export CASSANDRA_HOME=/opt/apache-cassandra-2.2.10 <br>
+export PATH=$PATH:$CASSANDRA_HOME/bin <br>
 
-You should now reboot the node, so everything is updated:
-sudo reboot
+You should now reboot the node, so everything is updated: <br>
+sudo reboot <br>
  
-Log back in and and confirm that everything is set properly:
-sudo sh $CASSANDRA_HOME/bin/cassandra # Starts Cassandra
-sudo sh $CASSANDRA_HOME/bin/cqlsh #Starts CQL shell
+Log back in and and confirm that everything is set properly: <br>
+sudo sh $CASSANDRA_HOME/bin/cassandra # Starts Cassandra <br>
+sudo sh $CASSANDRA_HOME/bin/cqlsh #Starts CQL shell <br>
 
-### Setting up Cassandra cluster
-Before configuring each node, make sure Cassandra is not running:
-$pkill cassandra
+### Setting up Cassandra cluster <br>
+Before configuring each node, make sure Cassandra is not running: <br>
+$pkill cassandra <br>
  
-You'll also need to clear data:
-$sudo rm -rf /var/lib/cassandra/*
+You'll also need to clear data: <br>
+$sudo rm -rf /var/lib/cassandra/* <br>
  
-4 node, single data center, single seed Cassandra cluster:
-wiki1
-wiki2
-wiki3
-wiki4
+4 node, single data center, single seed Cassandra cluster: <br>
+wiki1 <br>
+wiki2 <br>
+wiki3 <br>
+wiki4 <br>
 
-Configuration on nodes is done through customizing cassandra.yaml file **main config file**:
-$vi $CASSANDRA_HOME/conf/cassandra.yaml
+Configuration on nodes is done through customizing cassandra.yaml file **main config file**: <br>
+$vi $CASSANDRA_HOME/conf/cassandra.yaml <br>
 
-https://wiki.apache.org/cassandra/MultinodeCluster10
+https://wiki.apache.org/cassandra/MultinodeCluster10 <br>
 
-#### Adjusted Parameters in cassandra.yaml
+#### Adjusted Parameters in cassandra.yaml <br>
 
-wiki1
-cluster_name: 'WikiSpark Cluster'
-seed_provider:
-	- class_name: org.apache.cassandra.locator.SimpleSeedProvider parameters:
-		- seeds: 10.90.61.249
-concurrent_reads: 32
-concurrent_writes: 32
-concurrent_counter_writes: 32
-listen_address: 10.90.61.249
-rpc_address: 0.0.0.0
-rpc_port: 9160
-broadcast_rpc_address: localhost
-data_file_directories: /data/cassandra
+wiki1 <br>
+cluster_name: 'WikiSpark Cluster' <br>
+seed_provider: <br>
+	- class_name: org.apache.cassandra.locator.SimpleSeedProvider parameters: <br>
+		- seeds: 10.90.61.249 <br>
+concurrent_reads: 32 <br>
+concurrent_writes: 32<br>
+concurrent_counter_writes: 32<br>
+listen_address: 10.90.61.249<br>
+rpc_address: 0.0.0.0<br>
+rpc_port: 9160<br>
+broadcast_rpc_address: localhost <br>
+data_file_directories: /data/cassandra <br>
 
-Copied cassandra.yaml from wiki1 to the others then changed listen_address
-scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.241:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working
-scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.242:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working
-scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.243:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working
+Copied cassandra.yaml from wiki1 to the others then changed listen_address <br>
+scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.241:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working <br>
+scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.242:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working <br>
+scp /opt/apache-cassandra-2.2.10/conf/cassandra.yaml root@10.90.61.243:/opt/apache-cassandra-2.2.10/conf/cassandra.yaml.working <br>
 
-Delete & rename yaml file on each of the other 3 nodes
-rm $CASSANDRA_HOME/conf/cassandra.yaml
-mv $CASSANDRA_HOME/conf/cassandra.yaml.working $CASSANDRA_HOME/conf/cassandra.yaml
+Delete & rename yaml file on each of the other 3 nodes<br>
+rm $CASSANDRA_HOME/conf/cassandra.yaml<br>
+mv $CASSANDRA_HOME/conf/cassandra.yaml.working $CASSANDRA_HOME/conf/cassandra.yaml<br>
 
-Change on other nodes:
-wiki2
-listen_address: 10.90.61.241 
+Change on other nodes:<br>
+wiki2<br>
+listen_address: 10.90.61.241 <br>
 
-wiki3
-listen_address: 10.90.61.242
+wiki3<br>
+listen_address: 10.90.61.242<br>
 
-wiki4
-listen_address: 10.90.61.243
+wiki4<br>
+listen_address: 10.90.61.243<br>
 
 
-Once you have adjusted cassandra.yaml on all the nodes, start cassandra on nodes, doing it on the seed node first:
-$sudo sh $CASSANDRA_HOME/bin/cassandra
+Once you have adjusted cassandra.yaml on all the nodes, start cassandra on nodes, doing it on the seed node first:<br>
+$sudo sh $CASSANDRA_HOME/bin/cassandra<br>
 
-Check Status of Cassandra Cluster
- netstat -ant | grep 7000 (Make sure it is not still looking for 127.0.0.1:7000
+Check Status of Cassandra Cluster<br>
+ netstat -ant | grep 7000 (Make sure it is not still looking for 127.0.0.1:7000<br>
 
-Get a description of the cluster:
-$CASSANDRA_HOME/bin/nodetool describecluster
+Get a description of the cluster:<br>
+$CASSANDRA_HOME/bin/nodetool describecluster<br>
  
-Confirm that all the nodes are up:
-$CASSANDRA_HOME/bin/nodetool status
+Confirm that all the nodes are up:<br>
+$CASSANDRA_HOME/bin/nodetool status<br>
 
-To Kill Cassandra
-pkill cassandra
+To Kill Cassandra<br>
+pkill cassandra<br>
 
 
 ## Run Spark - Cassandra Connector
-- we could try to install this, but the connector github suggested to use a spark package which I've done below
+- we could try to install this, but the connector github suggested to use a spark package which I've done below<br>
 
-Assume we are using
-Spark 1.5 or 1.6
-Cassandra 2.2
-Scala 2.10
+Assume we are using<br>
+Spark 1.5 or 1.6<br>
+Cassandra 2.2<br>
+Scala 2.10<br>
 
-https://github.com/datastax/spark-cassandra-connector
-https://spark-packages.org/package/datastax/spark-cassandra-connector
+https://github.com/datastax/spark-cassandra-connector<br>
+https://spark-packages.org/package/datastax/spark-cassandra-connector<br>
 
-Run on Main Cassandra / Spark Node
-$SPARK_HOME/bin/spark-shell --packages datastax:spark-cassandra-connector:1.5.2-s_2.10
+Run on Main Cassandra / Spark Node<br>
+$SPARK_HOME/bin/spark-shell --packages datastax:spark-cassandra-connector:1.5.2-s_2.10<br>
 
 
