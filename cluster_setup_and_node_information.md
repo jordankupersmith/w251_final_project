@@ -10,21 +10,23 @@ slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billin
 
 ## Node Information
 
-37292553  wiki1          198.23.108.53    10.90.61.249  sjc01 YDv86lrb
-37288917  wiki2          198.23.108.52    10.90.61.241   sjc01  NAT2exYb
-37289001  wiki3          198.23.108.54    10.90.61.242   sjc01  BW2ADnul
-37289031  wiki4         198.23.108.51    10.90.61.243   sjc01  ZymD36km
+37292553  wiki1          198.23.108.53    10.90.61.249  sjc01 YDv86lrb <br>
+37288917  wiki2          198.23.108.52    10.90.61.241   sjc01  NAT2exYb <br>
+37289001  wiki3          198.23.108.54    10.90.61.242   sjc01  BW2ADnul <br>
+37289031  wiki4         198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
 
 
 ### Update /etc/hosts on each node
-/etc/hosts
-127.0.0.1 localhost.localdomain localhost10.90.61.249 wiki1.mnelson.ca wiki110.90.61.241 wiki2.mnelson.ca wiki2
-10.90.61.242 wiki3.mnelson.ca wiki3
-10.90.61.243 wiki4.mnelson.ca wiki4
+/etc/hosts <br>
+127.0.0.1 localhost.localdomain localhost <br>
+10.90.61.249 wiki1.mnelson.ca wiki1 <br>
+10.90.61.241 wiki2.mnelson.ca wiki2 <br>
+10.90.61.242 wiki3.mnelson.ca wiki3 <br>
+10.90.61.243 wiki4.mnelson.ca wiki4 <br>
 
 ### SSH Setup
 Enable SSH between Nodes Private IPs
-Create a keypair on master and copy it to the other systems (when prompted by ssh-keygen, use defaults):
+Create a keypair onÂ masterÂ and copy it to the other systems (when prompted byÂ ssh-keygen, use defaults):
 ssh-keygen -f ~/.ssh/id_rsa -b 2048 -t rsa -C 'w251 Final Project Key'
 
 From Master (where SSH was setup)
@@ -35,17 +37,18 @@ scp /root/.ssh/id_rsa.pub root@wiki3:/root/.ssh/id_rsa.pub
 scp /root/.ssh/id_rsa root@wiki4:/root/.ssh/id_rsa
 scp /root/.ssh/id_rsa.pub root@wiki4:/root/.ssh/id_rsa.pub
 
-Still on the master, accept all keys by SSHing to each box and typing "yes" and, once you're logged into the remote box, typing CTRL-d:
+Still on theÂ master, accept all keys by SSHing to each box and typing "yes" and, once you're logged into the remote box, typingÂ CTRL-d:
 for i in 0.0.0.0 wiki1 wiki2 wiki3 wiki4; do ssh $i; done
 
 ### Identify 1000GB Disks and mount to /data
 fdisk -l
 
-Assuming the disk is called /dev/xvdc 
+Assuming the disk is calledÂ /dev/xvdcÂ 
 mkdir /data
 mkfs.ext4 /dev/xvdc
 
-Add this line to /etc/fstab (with the appropriate disk path):  
+Add this line toÂ /etc/fstabÂ (with the appropriate disk path):
+  
 /dev/xvdc /data                   ext4    defaults,noatime        0 0
 
 Mount your disk and set the appropriate perms
@@ -60,7 +63,7 @@ Install packages:
 curl https://bintray.com/sbt/rpm/rpm | sudo tee /etc/yum.repos.d/bintray-sbt-rpm.repo
 yum install -y java-1.8.0-openjdk-headless sbt
 
-Set the proper location of JAVA_HOME and test it:
+Set the proper location ofÂ JAVA_HOMEÂ and test it:
 echo export JAVA_HOME=\"$(readlink -f $(which java) | grep -oP '.*(?=/bin)')\" >> /root/.bash_profile
 source /root/.bash_profile
 $JAVA_HOME/bin/java -version
@@ -71,12 +74,12 @@ curl http://www.gtlib.gatech.edu/pub/apache/spark/spark-1.6.2/spark-1.6.2-bin-ha
 Or try this download location (working)
 curl https://archive.apache.org/dist/spark/spark-1.6.2/spark-1.6.2-bin-hadoop2.6.tgz | tar -zx -C /usr/local --show-transformed --transform='s,/*[^/]*,spark,'
 
-For convenience, set $SPARK_HOME:
+For convenience, setÂ $SPARK_HOME:
 echo export SPARK_HOME=\"/usr/local/spark\" >> /root/.bash_profile
 source /root/.bash_profile
 
 ### Configure Spark
-On wiki1, create the new file $SPARK_HOME/conf/slaves with content:
+OnÂ wiki1, create the new fileÂ $SPARK_HOME/conf/slavesÂ with content:
 wiki1
 wiki2
 wiki3
@@ -86,18 +89,18 @@ View Running Spark Cluster in Browser
 http://198.23.108.53:8080/
 
 Start Spark from master
-Once you’ve set up the conf/slaves file, you can launch or stop your cluster with the following shell scripts, based on Hadoop’s deploy scripts, and available in $SPARK_HOME/:
-	• sbin/start-master.sh - Starts a master instance on the machine the script is executed on
-	• sbin/start-slaves.sh - Starts a slave instance on each machine specified in the conf/slaves file
-	• sbin/start-all.sh - Starts both a master and a number of slaves as described above
-	• sbin/stop-master.sh - Stops the master that was started via the bin/start-master.sh script
-	• sbin/stop-slaves.sh - Stops all slave instances on the machines specified in the conf/slaves file
-	• sbin/stop-all.sh - Stops both the master and the slaves as described above
+Once youâ€™ve set up theÂ conf/slavesÂ file, you can launch or stop your cluster with the following shell scripts, based on Hadoopâ€™s deploy scripts, and available inÂ $SPARK_HOME/:
+	â€¢ sbin/start-master.shÂ - Starts a master instance on the machine the script is executed on
+	â€¢ sbin/start-slaves.shÂ - Starts a slave instance on each machine specified in the conf/slaves file
+	â€¢ sbin/start-all.shÂ - Starts both a master and a number of slaves as described above
+	â€¢ sbin/stop-master.shÂ - Stops the master that was started via the bin/start-master.sh script
+	â€¢ sbin/stop-slaves.shÂ - Stops all slave instances on the machines specified in the conf/slaves file
+	â€¢ sbin/stop-all.shÂ - Stops both the master and the slaves as described above
 
-Start the master first, then open browser and see http://<master_ip>:8080/:
+Start the master first, then open browser and seeÂ http://<master_ip>:8080/:
 $SPARK_HOME/sbin/start-master.sh
 
-Then, run the start-slaves script, refresh the window and see the new workers (note that you can execute this from the master).
+Then, run theÂ start-slavesÂ script, refresh the window and see the new workers (note that you can execute this from the master).
 $SPARK_HOME/sbin/start-slaves.sh
 
 
@@ -127,7 +130,7 @@ export PATH=$PATH:$CASSANDRA_HOME/bin
 
 You should now reboot the node, so everything is updated:
 sudo reboot
- 
+Â 
 Log back in and and confirm that everything is set properly:
 sudo sh $CASSANDRA_HOME/bin/cassandra # Starts Cassandra
 sudo sh $CASSANDRA_HOME/bin/cqlsh #Starts CQL shell
@@ -135,10 +138,10 @@ sudo sh $CASSANDRA_HOME/bin/cqlsh #Starts CQL shell
 ### Setting up Cassandra cluster
 Before configuring each node, make sure Cassandra is not running:
 $pkill cassandra
- 
+Â 
 You'll also need to clear data:
 $sudo rm -rf /var/lib/cassandra/*
- 
+Â 
 4 node, single data center, single seed Cassandra cluster:
 wiki1
 wiki2
@@ -194,7 +197,7 @@ Check Status of Cassandra Cluster
 
 Get a description of the cluster:
 $CASSANDRA_HOME/bin/nodetool describecluster
- 
+Â 
 Confirm that all the nodes are up:
 $CASSANDRA_HOME/bin/nodetool status
 
