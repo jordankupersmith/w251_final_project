@@ -219,4 +219,21 @@ https://spark-packages.org/package/datastax/spark-cassandra-connector<br>
 Run on Main Cassandra / Spark Node<br>
 $SPARK_HOME/bin/spark-shell --packages datastax:spark-cassandra-connector:1.5.2-s_2.10<br>
 
+## get into cassandra command prompt and test replication
 
+$CASSANDRA_HOME/bin/cqlsh
+Set the replication factor:<br>
+>CREATE KEYSPACE test WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '4' };,<br>
+
+Create a test table:<br>
+ >CREATE TABLE planet( catalog int PRIMARY KEY, name text, mass double, density float, albedo float ); <br>
+
+Insert data into the table:<br>
+
+ INSERT INTO planet (catalog, name, mass, density, albedo) VALUES ( 3, 'Earth', 5.9722E24, 5.513, 0.367);
+ 
+Confirm that replication works by running the following on **each**  node: <br>
+
+$CASSANDRA_HOME/bin/cqlsh -e "SELECT * FROM test.planet;"<br>
+
+The test ran succesfully on all nodes.<br>
