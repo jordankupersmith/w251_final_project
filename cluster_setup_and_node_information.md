@@ -2,10 +2,10 @@
 
 ## Provision 4 VM's
 
-slcli vs create --datacenter=sjc01 --hostname=wiki1 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki2 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki3 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
+slcli vs create --datacenter=sjc01 --hostname=wiki1 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki2 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki3 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
 
 
 ## Node Information
