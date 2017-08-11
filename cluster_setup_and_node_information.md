@@ -2,10 +2,10 @@
 
 ## Provision 4 VM's
 
-slcli vs create --datacenter=sjc01 --hostname=wiki1 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki2 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki3 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
-slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
+slcli vs create --datacenter=sjc01 --hostname=wiki1 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki2 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki3 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
+slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billing=hourly --key=masterkey --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64<br>
 
 
 ## Node Information
@@ -41,19 +41,19 @@ Still on the master, accept all keys by SSHing to each box and typing "yes" and
 for i in 0.0.0.0 wiki1 wiki2 wiki3 wiki4; do ssh $i; done
 
 ### Identify 1000GB Disks and mount to /data
-fdisk -l
+fdisk -l<br>
 
-Assuming the disk is called /dev/xvdc 
-mkdir /data
-mkfs.ext4 /dev/xvdc
+Assuming the disk is called /dev/xvdc <br>
+mkdir /data<br>
+mkfs.ext4 /dev/xvdc<br>
 
-Add this line to /etc/fstab (with the appropriate disk path):
+Add this line to /etc/fstab (with the appropriate disk path):<br>
   
-/dev/xvdc /data                   ext4    defaults,noatime        0 0
+/dev/xvdc /data                   ext4    defaults,noatime        0 0<br>
 
-Mount your disk and set the appropriate perms
-mount /data
-chmod 1777 /data
+Mount your disk and set the appropriate perms<br>
+mount /data<br>
+chmod 1777 /data<br>
 
 
 ## Install Spark 1.6
@@ -237,3 +237,22 @@ Confirm that replication works by running the following on **each**  node: <br>
 $CASSANDRA_HOME/bin/cqlsh -e "SELECT * FROM test.planet;"<br>
 
 The test ran succesfully on all nodes.<br>
+
+# Download Page Views 
+
+https://dumps.wikimedia.org/other/pageviews/ is rate limited to a download speed of 1.5 mb/s. For the amount of data we are attempting to process, this is an unacceptably slow rate. Therefore, we are comissioning another VS on a different group member's account to mirror the wikimedia site. We will then use the public ip to SCP download the files to our cluster at a much faster download rate. <br>
+
+The "storage" cluster is:<br>
+slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --billing=hourly --key=softlayer  --cpu=2 --memory=4096 --disk=25 --disk=2000 --san --network=1000 --os=CENTOS_7_64<br>
+
+37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
+
+We mount the 2 TB HD as instructed above.<br>
+
+The download script is download.py and it is run in the background with:<br>
+	nohup python -u download.py > download_log &
+
+It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
+	
+	
+
