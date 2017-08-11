@@ -26,7 +26,8 @@ startday = datetime.date(2015, 05, 01)
 diff = today - startday
 numdays=diff.days
 
-
+## should we start downloading from the beginning, or the end?
+bStartAtBeginning = True
 
 ##What file extension are you trying to get?    
 ext = 'gz'
@@ -40,8 +41,12 @@ def listFD(url, ext=''):
 
 
 ###Get the dates you are trying to retrieve
-base = datetime.date.today()
-date_list = [base - datetime.timedelta(days=x) for x in range(0, numdays)]
+if bStartAtBeginning:
+    base = startday
+    date_list = [base + datetime.timedelta(days=x) for x in range(0, numdays)]
+else:
+    base = datetime.date.today()
+    date_list = [base - datetime.timedelta(days=x) for x in range(0, numdays)]
 
 ###make directories
 months=[]
