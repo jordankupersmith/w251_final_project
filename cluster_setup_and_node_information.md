@@ -237,3 +237,22 @@ Confirm that replication works by running the following on **each**  node: <br>
 $CASSANDRA_HOME/bin/cqlsh -e "SELECT * FROM test.planet;"<br>
 
 The test ran succesfully on all nodes.<br>
+
+# Download Page Views 
+
+https://dumps.wikimedia.org/other/pageviews/ is rate limited to a download speed of 1.5 mb/s. For the amount of data we are attempting to process, this is an unacceptably slow rate. Therefore, we are comissioning another VS on a different group member's account to mirror the wikimedia site. We will then use the public ip to SCP download the files to our cluster at a much faster download rate. <br>
+
+The "storage" cluster is:<br>
+slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --billing=hourly --key=softlayer  --cpu=2 --memory=4096 --disk=25 --disk=2000 --san --network=1000 --os=CENTOS_7_64<br>
+
+37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
+
+We mount the 2 TB HD as instructed above.<br>
+
+The download script is download.py and it is run in the background with:<br>
+	nohup python -u download.py > download_log &
+
+It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
+	
+	
+
