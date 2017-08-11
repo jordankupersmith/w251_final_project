@@ -41,19 +41,19 @@ Still on the master, accept all keys by SSHing to each box and typing "yes" and
 for i in 0.0.0.0 wiki1 wiki2 wiki3 wiki4; do ssh $i; done
 
 ### Identify 1000GB Disks and mount to /data
-fdisk -l
+fdisk -l<br>
 
-Assuming the disk is called /dev/xvdc 
-mkdir /data
-mkfs.ext4 /dev/xvdc
+Assuming the disk is called /dev/xvdc <br>
+mkdir /data<br>
+mkfs.ext4 /dev/xvdc<br>
 
-Add this line to /etc/fstab (with the appropriate disk path):
+Add this line to /etc/fstab (with the appropriate disk path):<br>
   
-/dev/xvdc /data                   ext4    defaults,noatime        0 0
+/dev/xvdc /data                   ext4    defaults,noatime        0 0<br>
 
-Mount your disk and set the appropriate perms
-mount /data
-chmod 1777 /data
+Mount your disk and set the appropriate perms<br>
+mount /data<br>
+chmod 1777 /data<br>
 
 
 ## Install Spark 1.6
