@@ -246,7 +246,8 @@ The "storage" cluster is:<br>
 slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --billing=hourly --key=softlayer  --cpu=2 --memory=4096 --disk=25 --disk=2000 --san --network=1000 --os=CENTOS_7_64<br>
 
 37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
-37552841 :  wikistorage  :  169.53.147.154  :  10.122.178.252  :  sjc01  :  RKvyjnx3  :  Dave
+37552841 :  wikistorage  :  169.53.147.154  :  10.122.178.252  :  sjc01  :  RKvyjnx3  :  Dave <br>
+37578599 :  wikistorage  :  50.23.91.12   :  10.54.14.17  :   sjc01  :  FA9SJ75p  :  Utthaman
 
 We mount the 2 TB HD as instructed above.<br>
 
