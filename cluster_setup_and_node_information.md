@@ -255,5 +255,19 @@ The download script is download.py and it is run in the background with:<br>
 
 It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
 	
-	
+# Preprocessing
+
+USAGE: sudo python preprocess.py <dir name>
+
+Preprocessing consists of building a single daily file that aggregates the counts from
+each hourly file. Doing this with a Python dictionary used too much memory so a shelve
+object was used instead and then tuned to control the RAM usage to an acceptable level.
+Performance was reduced, but preprocessing performance is not a high-priority objective.
+
+Files will be transfered periodically via scp. After the initial bulk load, this script
+can be scheduled in a processing chain after download and before ingestion.
+
+
+
+
 
