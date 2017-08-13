@@ -268,7 +268,12 @@ Performance was reduced, but preprocessing performance is not a high-priority ob
 Files will be transfered periodically via scp. After the initial bulk load, this script
 can be scheduled in a processing chain after download and before ingestion.
 
+It seems that a bigger server can do all of this in RAM in a fraction of the time.
+Tested on wiki1 and confirmed. There is no reason not to provision a few large servers and do all the preprocessing quickly in RAM and have it ready to transfer when needed.
 
+The in memory preprocessor script is called as follows:
+
+USAGE: sudo python preprocessDict.py <dir name>
 
 
 
