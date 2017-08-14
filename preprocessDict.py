@@ -62,7 +62,7 @@ for key in dictFnamesByDate:
                 chunk.extend( (str(lang + ' ' + page + ' ' + str(dictAggViews[lang][page])), ))
                 chunkIter += 1
                 if chunkIter > chunkSize:
-                    write( '\n'.join( chunk))
+                    fout.write( '\n'.join( chunk))
                     chunkIter = 0
                     chunk = []
             # write out the last chunk
