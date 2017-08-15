@@ -248,7 +248,8 @@ slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --
 37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
 37552841 :  wikistorage  :  169.53.147.154  :  10.122.178.252  :  sjc01  :  RKvyjnx3  :  Dave <br>
 37578599 :  wikistorage  :  50.23.91.12   :  10.54.14.17  :   sjc01  :  FA9SJ75p  :  Utthaman
-
+37656427 :  wikistorage2  :  169.53.147.158  :  10.122.178.210  :  sjc01  :  JVJc56fT  :  Dave <br>
+37656435 :  wikistorage3  :  169.53.147.153  :  10.122.178.219  :  sjc01  :  KzL35uFP  :  Dave <br>
 We mount the 2 TB HD as instructed above.<br>
 
 The download script is download.py and it is run in the background with:<br>
@@ -258,7 +259,9 @@ It is estimated to take 7 days to download all pageview data back to May 1, 2015
 	
 # Preprocessing
 
-USAGE: sudo python preprocess.py <dir name>
+USAGE: sudo python preprocessDict.py <dir name>
+
+Note: After trying a few methods, doing this completely in memory is the path of least resistance. To that end, wikistorage2 and wikistorage3 were provisioned for this task.
 
 Preprocessing consists of building a single daily file that aggregates the counts from
 each hourly file. Doing this with a Python dictionary used too much memory so a shelve
@@ -268,12 +271,13 @@ Performance was reduced, but preprocessing performance is not a high-priority ob
 Files will be transfered periodically via scp. After the initial bulk load, this script
 can be scheduled in a processing chain after download and before ingestion.
 
-It seems that a bigger server can do all of this in RAM in a fraction of the time.
-Tested on wiki1 and confirmed. There is no reason not to provision a few large servers and do all the preprocessing quickly in RAM and have it ready to transfer when needed.
+Preprocessed files will transferred to /data/filePrep/processed on wiki1
+At roughly 500MB per aggregated daily gzip file, the compressed size will be about 183GB per full year.
 
-The in memory preprocessor script is called as follows:
 
-USAGE: sudo python preprocessDict.py <dir name>
+
+
+
 
 
 
