@@ -22,12 +22,13 @@ os.chdir('/data/')
 
 
 today = datetime.date.today()
+
 startday = datetime.date(2015, 05, 01)
 diff = today - startday
 numdays=diff.days
 
 ## should we start downloading from the beginning, or the end?
-bStartAtBeginning = True
+bStartAtBeginning = False
 
 ##What file extension are you trying to get?    
 ext = 'gz'
@@ -45,15 +46,18 @@ if bStartAtBeginning:
     base = startday
     date_list = [base + datetime.timedelta(days=x) for x in range(0, numdays)]
 else:
-    base = datetime.date.today()
+    base = today
     date_list = [base - datetime.timedelta(days=x) for x in range(0, numdays)]
 
 ###make directories
 months=[]
 for r in range(1, 13):
-    month="0" + str(r)
+    if r < 10:
+        month="0" + str(r)
+    else:
+        month=str(r)
     months.append(month)
-
+    
 
 for year in range(2015, 2018):
     if os.path.isdir(str(year)):
