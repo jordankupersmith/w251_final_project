@@ -13,7 +13,7 @@ slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billin
 37292553  wiki1          198.23.108.53    10.90.61.249  sjc01 YDv86lrb <br>
 37288917  wiki2          198.23.108.52    10.90.61.241   sjc01  NAT2exYb <br>
 37289001  wiki3          198.23.108.54    10.90.61.242   sjc01  BW2ADnul <br>
-37289031  wiki4         198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
+37289031  wiki4          198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
 
 
 ### Update /etc/hosts on each node
@@ -264,11 +264,27 @@ The download script is download.py and it is run in the background with:<br>
 
 It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
 
+<<<<<<< HEAD
 -----------------------------------
 	
 # Preprocessing
 
 USAGE: sudo python preprocess.py <dir name>
+=======
+
+# Preprocessing
+
+slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --billing=hourly --key=RSANoPwrd  --cpu=2 --memory=8192 --disk=25 --disk=2000 --san --network=1000 --os=CENTOS_7_64<br>
+
+37656427 :  wikistorage2  :  169.53.147.158  :  10.122.178.210  :  sjc01  :  JVJc56fT  :  Dave <br>
+37656435 :  wikistorage3  :  169.53.147.153  :  10.122.178.219  :  sjc01  :  KzL35uFP  :  Dave <br>
+37745735 :  wikistorage4  :  198.23.87.226  :  10.88.184.93  :  sjc01  :  Fb9bcZ5K  :  Dave <br>
+37745741 :  wikistorage5  :  198.23.87.229  :  10.88.184.100  :  sjc01  :  GuEwpj6d  :  Dave <br>
+
+USAGE: sudo python preprocessDict.py <dir name>
+
+Note: After trying a few methods, doing this completely in memory is the path of least resistance. To that end, wikistorage2 and wikistorage3 were provisioned for this task.
+>>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
 
 Preprocessing consists of building a single daily file that aggregates the counts from
 each hourly file. Doing this with a Python dictionary used too much memory so a shelve
@@ -339,7 +355,7 @@ mv aggregateviews-201509{01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,1
 
 ----------------------------------------------------------------------
 
-Load a single file
+Load a single file into Cassandra
 
 CREATE KEYSPACE wikikeyspace WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '2' };
 CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, view_count int );
@@ -360,6 +376,27 @@ CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, 
 
 
 ----------------------------------------------------------------------
+
+transfer from wikistorage2 to wiki1 (while on wikistorage2)
+scp ./2015/2015-{09,10,12}/agg* root@198.23.108.53:/data/filePrep/processed/2015
+
+transfer may and june 2015 from wikistorage2 to wiki1 (while on wiki1)
+scp /data/page_view_files/2015/2015-{05,06}/agg* /data/filePrep/processed/2015
+
+<<<<<<< HEAD
+transfer from wikistorage3 to wiki2
+scp ./2017/2017-04/agg* root@198.23.108.52:/data/filePrep/processed/2017
+>>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
+
+transfer from Jordan:wikistorage to wikistorage4
+scp -r 2016-{06,07,08,09,10,11,12} 198.23.87.226:/data/page_file_views/2016
+
+transfer from Dave:wikistorage to wikistorage5
+scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
+>>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
+
+----------------------------------------------------------------------
+
 
 # Spark Query
 
