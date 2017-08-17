@@ -1,0 +1,15 @@
+Provision information (change hostname and key)
+
+slcli vs create --datacenter=dal05 --hostname=wikispark1 --domain=someplace.net --billing=hourly --key=softlayer --cpu=2 --memory=8192 --disk=25  --disk=1000 --san  --network=1000 --os=CENTOS_7_64
+
+To find disk location type
+fdisk -l
+
+Nodes list:
+ 
+node name     primary_ip        secondary_ip    password      disk location   person who created it
+---------------------------------------------------------------------------------------------
+wikispark1 	173.193.170.148		10.81.67.190  	E55CvKjH 	  /dev/xvdc	      Jordan
+wikispark2 	108.168.128.202		10.82.6.137	    Bzv7eVAy	  /dev/xvdc	      Matt
+wikispark3  173.193.184.37      10.81.221.134   B4Aljsc7      /dev/xdvc       Dave
+wikispark4  75.126.23.147       10.86.42.229    KHw8gy63      /dev/xvdc       utthaman

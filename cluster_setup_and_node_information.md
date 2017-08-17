@@ -1,4 +1,4 @@
-# Full Cluster Setup (Spark + Cassandra on 4 nodes)
+﻿# Full Cluster Setup (Spark + Cassandra on 4 nodes)
 
 ## Provision 4 VM's
 
@@ -55,6 +55,7 @@ Mount your disk and set the appropriate perms<br>
 mount /data<br>
 chmod 1777 /data<br>
 
+----------------------------------------------------------------------
 
 ## Install Spark 1.6
 
@@ -103,6 +104,7 @@ $SPARK_HOME/sbin/start-master.sh
 Then, run the start-slaves script, refresh the window and see the new workers (note that you can execute this from the master).
 $SPARK_HOME/sbin/start-slaves.sh
 
+----------------------------------------------------------------------
 
 ## Install CASSANDRA 2.2
 https://www.ca.com/us/services-support/ca-support/ca-support-online/knowledge-base-articles.TEC1714429.html
@@ -204,8 +206,9 @@ $CASSANDRA_HOME/bin/nodetool status<br>
 To Kill Cassandra<br>
 pkill cassandra<br>
 
+----------------------------------------------------------------------
 
-## Run Spark - Cassandra Connector
+## Run Spark - Cassandra Connector (Not using anymore, want to use Pyspark Connector Below)
 - we could try to install this, but the connector github suggested to use a spark package which I've done below<br>
 
 Assume we are using<br>
@@ -218,6 +221,9 @@ https://spark-packages.org/package/datastax/spark-cassandra-connector<br>
 
 Run on Main Cassandra / Spark Node<br>
 $SPARK_HOME/bin/spark-shell --packages datastax:spark-cassandra-connector:1.5.2-s_2.10<br>
+
+
+----------------------------------------------------------------------
 
 ## get into cassandra command prompt and test replication
 
@@ -238,6 +244,8 @@ $CASSANDRA_HOME/bin/cqlsh -e "SELECT * FROM test.planet;"<br>
 
 The test ran succesfully on all nodes.<br>
 
+----------------------------------------------------------------------
+
 # Download Page Views 
 
 https://dumps.wikimedia.org/other/pageviews/ is rate limited to a download speed of 1.5 mb/s. For the amount of data we are attempting to process, this is an unacceptably slow rate. Therefore, we are comissioning another VS on a different group member's account to mirror the wikimedia site. We will then use the public ip to SCP download the files to our cluster at a much faster download rate. <br>
@@ -248,20 +256,19 @@ slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --
 37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
 37552841 :  wikistorage  :  169.53.147.154  :  10.122.178.252  :  sjc01  :  RKvyjnx3  :  Dave <br>
 37578599 :  wikistorage  :  50.23.91.12   :  10.54.14.17  :   sjc01  :  FA9SJ75p  :  Utthaman
-37656427 :  wikistorage2  :  169.53.147.158  :  10.122.178.210  :  sjc01  :  JVJc56fT  :  Dave <br>
-37656435 :  wikistorage3  :  169.53.147.153  :  10.122.178.219  :  sjc01  :  KzL35uFP  :  Dave <br>
+
 We mount the 2 TB HD as instructed above.<br>
 
 The download script is download.py and it is run in the background with:<br>
 	nohup python -u download.py > download_log &
 
 It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
+
+-----------------------------------
 	
 # Preprocessing
 
-USAGE: sudo python preprocessDict.py <dir name>
-
-Note: After trying a few methods, doing this completely in memory is the path of least resistance. To that end, wikistorage2 and wikistorage3 were provisioned for this task.
+USAGE: sudo python preprocess.py <dir name>
 
 Preprocessing consists of building a single daily file that aggregates the counts from
 each hourly file. Doing this with a Python dictionary used too much memory so a shelve
@@ -271,13 +278,97 @@ Performance was reduced, but preprocessing performance is not a high-priority ob
 Files will be transfered periodically via scp. After the initial bulk load, this script
 can be scheduled in a processing chain after download and before ingestion.
 
-Preprocessed files will transferred to /data/filePrep/processed on wiki1
-At roughly 500MB per aggregated daily gzip file, the compressed size will be about 183GB per full year.
+It seems that a bigger server can do all of this in RAM in a fraction of the time.
+Tested on wiki1 and confirmed. There is no reason not to provision a few large servers and do all the preprocessing quickly in RAM and have it ready to transfer when needed.
+
+The in memory preprocessor script is called as follows:
+
+USAGE: sudo python preprocessDict.py <dir name>
+
+-----------------------------------
+
+Setting up Cassandra Loader on each node
+
+Install Gradle
+yum install git -y
+yum install unzip -y
+yum install zip -y
+wget https://services.gradle.org/distributions/gradle-4.1-bin.zip
+mkdir /opt/gradle
+unzip -d /opt/gradle gradle-4.1-bin.zip
+ls /opt/gradle/gradle-4.1
+export PATH=$PATH:/opt/gradle/gradle-4.1/bin
+gradle -v
 
 
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.141-1.b16.el7_3.x86_64
+export PATH=$JAVA_HOME/bin:$PATH
+
+yum install -y java-1.8.0-openjdk-devel
 
 
+Clone Cassandra-Loader Github
+cd ~
+git clone https://github.com/brianmhess/cassandra-loader.git
+cd ~/cassandra-loader
+
+Build
+gradle loader
 
 
+If missing tools.jar
+
+vi ~/.gradle/gradle.properties
+ADD IN 
+org.gradle.java.home=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.141-1.b16.el7_3.x86_64
+
+----------------------------------------------------------------------
 
 
+Make Folders & Batch Uncompress Files
+mkdir uncompressed
+mkdir uncompressed/success
+mkdir uncompressed/failure
+mkdir uncompressed/errors
+
+
+Unzip Files by month & move to uncompressed folder (Example)
+gunzip aggregateviews-201509{01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31}.gz | mv * uncompressed/
+Move files to uncompressed folder by month
+mv aggregateviews-201509{01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31} uncompressed/
+
+----------------------------------------------------------------------
+
+Load a single file
+
+CREATE KEYSPACE wikikeyspace WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '2' };
+CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, view_count int );
+
+
+/root/cassandra-loader/build/cassandra-loader \
+-f /data/filePrep/processed/2015/uncompressed/aggregateviews-20151023 \
+-host 10.90.61.249 \
+-schema "wikikeyspace.t20151023(language, page_name, view_count)" \
+-delim " " \
+-consistencyLevel ONE \
+-numRetries 1 \
+-maxErrors -1 \
+-maxInsertErrors -1 \
+-successDir /data/filePrep/processed/2015/uncompressed/success \
+-failureDir /data/filePrep/processed/2015/uncompressed/failure \
+-rateFile /data/filePrep/processed/2015/uncompressed/rate_file.csv
+
+
+----------------------------------------------------------------------
+
+# Spark Query
+
+# Cassandra RDD Operations & Pyspark Connector HERE
+# https://github.com/TargetHolding/pyspark-cassandra
+
+#### This should be how you run this script ######
+# $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
+
+# Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh
+# select wikikeyspace;
+# select * from mattquery2 limit 50;
