@@ -13,7 +13,7 @@ slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billin
 37292553  wiki1          198.23.108.53    10.90.61.249  sjc01 YDv86lrb <br>
 37288917  wiki2          198.23.108.52    10.90.61.241   sjc01  NAT2exYb <br>
 37289001  wiki3          198.23.108.54    10.90.61.242   sjc01  BW2ADnul <br>
-37289031  wiki4         198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
+37289031  wiki4          198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
 
 
 ### Update /etc/hosts on each node
@@ -248,16 +248,23 @@ slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --
 37521507 :  wikistorage  :   50.23.97.102  :  10.54.225.3   :   sjc01    :   PRyyk43v : jordan <br>
 37552841 :  wikistorage  :  169.53.147.154  :  10.122.178.252  :  sjc01  :  RKvyjnx3  :  Dave <br>
 37578599 :  wikistorage  :  50.23.91.12   :  10.54.14.17  :   sjc01  :  FA9SJ75p  :  Utthaman
-37656427 :  wikistorage2  :  169.53.147.158  :  10.122.178.210  :  sjc01  :  JVJc56fT  :  Dave <br>
-37656435 :  wikistorage3  :  169.53.147.153  :  10.122.178.219  :  sjc01  :  KzL35uFP  :  Dave <br>
+
 We mount the 2 TB HD as instructed above.<br>
 
 The download script is download.py and it is run in the background with:<br>
 	nohup python -u download.py > download_log &
 
 It is estimated to take 7 days to download all pageview data back to May 1, 2015. 
-	
+
+
 # Preprocessing
+
+slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --billing=hourly --key=RSANoPwrd  --cpu=2 --memory=8192 --disk=25 --disk=2000 --san --network=1000 --os=CENTOS_7_64<br>
+
+37656427 :  wikistorage2  :  169.53.147.158  :  10.122.178.210  :  sjc01  :  JVJc56fT  :  Dave <br>
+37656435 :  wikistorage3  :  169.53.147.153  :  10.122.178.219  :  sjc01  :  KzL35uFP  :  Dave <br>
+37745735 :  wikistorage4  :  198.23.87.226  :  10.88.184.93  :  sjc01  :  Fb9bcZ5K  :  Dave <br>
+37745741 :  wikistorage5  :  198.23.87.229  :  10.88.184.100  :  sjc01  :  GuEwpj6d  :  Dave <br>
 
 USAGE: sudo python preprocessDict.py <dir name>
 
@@ -274,10 +281,24 @@ can be scheduled in a processing chain after download and before ingestion.
 Preprocessed files will transferred to /data/filePrep/processed on wiki1
 At roughly 500MB per aggregated daily gzip file, the compressed size will be about 183GB per full year.
 
+-------------------------------------------------------------------------------------------
+THESE WILL BE DELETED, BUT REMAIN NOW BECAUSE THEY'LL PROBABLY BE NEEDED AGAIN IN SOME FORM
+-------------------------------------------------------------------------------------------
+transfer from wikistorage2 to wiki1 (while on wikistorage2)
+scp ./2015/2015-{09,10,12}/agg* root@198.23.108.53:/data/filePrep/processed/2015
+
+transfer may and june 2015 from wikistorage2 to wiki1 (while on wiki1)
+scp /data/page_view_files/2015/2015-{05,06}/agg* /data/filePrep/processed/2015
+
+transfer from wikistorage3 to wiki2
+scp ./2017/2017-04/agg* root@198.23.108.52:/data/filePrep/processed/2017
+
+transfer from Jordan:wikistorage to wikistorage4
+scp -r 2016-{06,07,08,09,10,11,12} 198.23.87.226:/data/page_file_views/2016
 
 
-
-
+transfer from Dave:wikistorage to wikistorage5
+scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
 
 
 
