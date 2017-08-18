@@ -6,8 +6,12 @@
 #### This should be how you run this script ######
 # $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
 
+###THis is a sample quiery in cql
+### SELECT "page_name", "view_count" FROM "wikikeyspace"."t20150916" WHERE token("page_name") > ? AND token("page_name") <= ? AND language=?   ALLOW FILTERING: Predicates on non-primary-key columns (language) are not yet supported for non secondary index queries) [duplicate 17]
+
+
 # Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh
-# select wikikeyspace;
+# use wikikeyspace;
 # select * from mattquery2 limit 50;
 # Couldn't get Order By to work...
 
@@ -60,19 +64,26 @@
 def query_first_then_join(sc):
 
     # Select Dates
-    dates_to_query = [20150519]
+    #dates_to_query = [20150916]
+    dates_to_query =[20150915, 20160122, 20170426]
     tables_to_query = ["t"+str(i) for i in dates_to_query]
-
+    
+    
+    
     rdd_list = []
-    for date_table in tables_to_query:
+    for i, date_table in enumerate(tables_to_query):
 
-
+        #globals()['string%s' % x]
         # Query Structure (Total all pages with the word Trump in it over the date range)
-        current_monthly_table = sc \
+        
+        #current_monthly_table = sc \
+        ##this "globals" command creates a RDD name based on the order in the loop. The idea is to create an RDD for each date and then join them at the end after the loop
+        globals()['current_monthly_table%s' % i] = sc \
         .cassandraTable("wikikeyspace", date_table) \
         .select("page_name", "view_count") \
-        .where("language=?", "en") \
-        .filter(lambda r: "Trump" in r["page_name"]) \
+        .filter(lambda r: "Obama" in r["page_name"]) 
+        #.where("language=?", "en") \
+        
         # .map(lambda r: (r["page_name"], "view_count") \ #mapping and reducing changes current_monthly_table from an RDD, preventing saving to a cassandra table?
         # .reduceByKey(lambda a, b: a + b)
         # .collect()
@@ -94,7 +105,18 @@ def query_first_then_join(sc):
         # print(type(current_monthly_table))
 
         # Save to Cassandra (nested dictionaries create the structure of the cassandra table)
-        current_monthly_table.saveToCassandra("wikikeyspace", "mattquery2")
+        ####this makes a list of an RDD so we can join them after the loop.
+        add_to_list='current_monthly_table%s' % i
+        rdd_list.append(add_to_list)
+    print(rdd_list)
+    current_monthly_table0.count()   ###testing here only to make sure all RDDs were created.
+    current_monthly_table1.count() ###testing here only to make sure all RDDs were created.
+    current_monthly_table2.count() ###testing here only to make sure all RDDs were created.
+    
+    
+###This sc.union command didn't seem to be working, but maybe it was only due to not enough free memory?    
+    #to_cassandra = sc.union(rdd_list)
+    #to_cassandra.saveToCassandra("wikikeyspace", "mattquery2")
 
 
 # def join_first_then_query(sc): #Careful with this! Could quickly exceed Spark available Memory
