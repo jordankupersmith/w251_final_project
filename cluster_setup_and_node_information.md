@@ -413,4 +413,4 @@ scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
  
  Stand alone machine with Spark and Cassandra installed 16GB Memory and 100GB Disk <br>
  ----------------------------------------------------------------------------------
- 37883187 :   wikisingle  :  169.53.128.91  : 10.122.208.247 :   sjc01  ZP2atndA <br>
+ 37883187 :   wikisingle  :  169.53.128.91  : 10.122.208.247 :   sjc01    ZP2atndA <br>
