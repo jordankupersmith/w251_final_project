@@ -410,3 +410,7 @@ scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
  Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh<br>
  use wikikeyspace;<br>
  select * from mattquery2 limit 50;<br>
+ 
+ Stand alone machine with Spark and Cassandra installed 16GB Memory and 100GB Disk <br>
+ ----------------------------------------------------------------------------------
+ 37883187 :   wikisingle  :  169.53.128.91  : 10.122.208.247 :   sjc01  ZP2atndA <br>
