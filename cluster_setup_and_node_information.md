@@ -398,14 +398,15 @@ scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
 ----------------------------------------------------------------------
 
 
-# Spark Query
+ Spark Query
 
-# Cassandra RDD Operations & Pyspark Connector HERE
-# https://github.com/TargetHolding/pyspark-cassandra
+ Cassandra RDD Operations & Pyspark Connector HERE<br>
+ https://github.com/TargetHolding/pyspark-cassandra<br>
 
-#### This should be how you run this script ######
-# $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
+#### This should be how you run this script ######<br>
+	 $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
+<br>
 
-# Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh
-# select wikikeyspace;
-# select * from mattquery2 limit 50;
+ Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh<br>
+ use wikikeyspace;<br>
+ select * from mattquery2 limit 50;<br>
