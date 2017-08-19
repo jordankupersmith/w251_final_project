@@ -38,7 +38,7 @@ start_time = time.time()
 #rows = t20160101.objects.all()
 #rows = t20160101.objects.filter(language='en')
 #print rows
-rows = session.execute("select page_name, view_count, language from t20160101 where language='en' ALLOW FILTERING")
+rows = session.execute("select page_name, view_count, language from t20160101")
 #rows=session.execute(query, parameters=['en'])
 #cassandra.cluster.ResultSet
 #for line in rows:
@@ -64,16 +64,16 @@ rows = session.execute("select page_name, view_count, language from t20160101 wh
 d2={}
 #print type(rows)
 #d2_list=[]
-## for line in rows:
+for line in rows:
     
-    # if 'obama' in line.page_name:
-        # print line.page_name, line.view_count
-       # #list_add=[line.page_name, line.view_count]
-        # d2.update({line.page_name:line.view_count})
-        # #d2[k] = v
-       # #d2_list.append(list_add)
-    # else:
-       # pass
+    if 'obama' in line.page_name and line.language=='en':
+        #print line.page_name, line.view_count
+       #list_add=[line.page_name, line.view_count]
+        d2.update({line.page_name:line.view_count})
+        #d2[k] = v
+       #d2_list.append(list_add)
+    else:
+       pass
         
 print "Length : %d" % len (d2)        
 print "--- %s seconds ---" % (time.time() - start_time)
