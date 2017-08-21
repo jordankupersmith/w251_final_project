@@ -1,4 +1,4 @@
-﻿# Full Cluster Setup (Spark + Cassandra on 4 nodes)
+# Full Cluster Setup (Spark + Cassandra on 4 nodes)
 
 ## Provision 4 VM's
 
@@ -376,27 +376,6 @@ CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, 
 
 
 ----------------------------------------------------------------------
-
-transfer from wikistorage2 to wiki1 (while on wikistorage2)
-scp ./2015/2015-{09,10,12}/agg* root@198.23.108.53:/data/filePrep/processed/2015
-
-transfer may and june 2015 from wikistorage2 to wiki1 (while on wiki1)
-scp /data/page_view_files/2015/2015-{05,06}/agg* /data/filePrep/processed/2015
-
-<<<<<<< HEAD
-transfer from wikistorage3 to wiki2
-scp ./2017/2017-04/agg* root@198.23.108.52:/data/filePrep/processed/2017
->>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
-
-transfer from Jordan:wikistorage to wikistorage4
-scp -r 2016-{06,07,08,09,10,11,12} 198.23.87.226:/data/page_file_views/2016
-
-transfer from Dave:wikistorage to wikistorage5
-scp -r 2016-{01,02,03,04,05} 10.88.184.100:/data/page_file_views/2016
->>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
-
-----------------------------------------------------------------------
-
 
  Spark Query
 
