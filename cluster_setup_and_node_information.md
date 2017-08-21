@@ -269,7 +269,7 @@ It is estimated to take 7 days to download all pageview data back to May 1, 2015
 	
 # Preprocessing
 
-USAGE: sudo python preprocess.py <dir name>
+USAGE: sudo python preprocessDict.py <dir name>
 =======
 
 # Preprocessing
@@ -283,24 +283,14 @@ slcli vs create --datacenter=sjc01 --hostname=wikistorage --domain=mnelson.ca --
 
 USAGE: sudo python preprocessDict.py <dir name>
 
-Note: After trying a few methods, doing this completely in memory is the path of least resistance. To that end, wikistorage2 and wikistorage3 were provisioned for this task.
->>>>>>> b6175c5cacdd0e1840b3f8e41022177c973b4c55
-
 Preprocessing consists of building a single daily file that aggregates the counts from
-each hourly file. Doing this with a Python dictionary used too much memory so a shelve
+each hourly file. The first attempt with a Python Dictionary used too much memory so a shelve
 object was used instead and then tuned to control the RAM usage to an acceptable level.
-Performance was reduced, but preprocessing performance is not a high-priority objective.
+This reduced performance to an unacceptible level. RAM was upgraded on the preprocessing servers 
+and a standard Python dictionary was the ultimate solution.
 
 Files will be transfered periodically via scp. After the initial bulk load, this script
 can be scheduled in a processing chain after download and before ingestion.
-
-It seems that a bigger server can do all of this in RAM in a fraction of the time.
-Tested on wiki1 and confirmed. There is no reason not to provision a few large servers and do all the preprocessing quickly in RAM and have it ready to transfer when needed.
-
-The in memory preprocessor script is called as follows:
-
-USAGE: sudo python preprocessDict.py <dir name>
-
 -----------------------------------
 
 Setting up Cassandra Loader on each node
@@ -386,6 +376,10 @@ CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, 
 	 $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
 <br>
 
+### or to load the pyspark shell ###
+
+$SPARK_HOME/bin/pyspark --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249
+
  Takes a while to run, but you can pull up the results in CASSANDRA_HOME/bin/cqlsh<br>
  use wikikeyspace;<br>
  select * from mattquery2 limit 50;<br>
@@ -393,3 +387,18 @@ CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, 
  Stand alone machine with Spark and Cassandra installed 16GB Memory and 100GB Disk <br>
  ----------------------------------------------------------------------------------
  37883187 :   wikisingle  :  169.53.128.91  : 10.122.208.247 :   sjc01    ZP2atndA <br>
+
+----------------------------------------------------------------------------------
+
+setup Cassandra-R connection
+
+download trial version of jdbc driver from: http://www.cdata.com/drivers/cassandra/download/jdbc/
+run setup.jar
+use defaults
+
+in RStudio:
+install.packages("RJDBC")
+
+
+
+
