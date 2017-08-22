@@ -2,9 +2,7 @@ import pyspark_cassandra
 from pyspark import SparkConf
 from pyspark.sql import *
 import pyspark.sql.functions as F
-#from pyspark.sql import SQLContext
 import time
-
 
 
 ####### QUERY STRUCTURE # 1 ########
@@ -15,19 +13,20 @@ import time
 query_name = 'mattquery12'
 # keyword = ''
 
-
 ## Module Constants
 APP_NAME = "pySpark & Cassandra Query"
 
 conf = SparkConf() \
     .setAppName(APP_NAME) \
-    # .setMaster("spark://10.90.61.249:7077")
+    .setMaster("spark://10.90.61.249:7077")
 
 sc = pyspark_cassandra.CassandraSparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 # 7 random dates
-dates_to_query = [20151201, 20151202]
+#dates_to_query = [20160101, 20160102, 20160103, 20160104, 20160105, 20160106, 20160107]
+dates_to_query = [20151225, 20151226, 20151227, 20151228, 20151229, 20151230, 20151231]
+
 tables_to_query = ["t"+str(i) for i in dates_to_query]
 
 time_start = time.time()
@@ -51,6 +50,47 @@ for i, date_table in enumerate(tables_to_query):
     sqlContext.cacheTable("aggTable")
 
 dfAgg.orderBy( dfAgg.total.desc()).show()
+
+### OUTPUT TABLE/FILE NAME - MAX LENGTH IS 63 CHARS###
+### (assumes there are at least 2 dates) ###
+#Sum_of_Views_Per_Language_From
+output_table_name = "Query1_From_" + str(dates_to_query[0]) \
+                    + "_to_" + str(dates_to_query[-1])
+
+dfAgg.toPandas().to_csv('/data/spark_queries/outputFiles/' + output_table_name + '.csv', header=True)
+
+#try:
+    # connect to DB
+    #con = psycopg2.connect("dbname='251FinalProject' user='janbodnar'")   
+    #cur = con.cursor()
+    
+    # query name is (start_date - end_date) - that is table name
+    # create table
+    #cur.execute("DROP TABLE IF EXISTS " + output_table_name)
+    #cur.execute("CREATE TABLE " + output_table_name + " (Language TEXT, Name TEXT, Price INT)")
+    
+    # create sql insert statement
+    #sqlInsert = "INSERT INTO " + output_table_name + " (language, count) VALUES(%s, %s)"
+    
+    # then insert in table
+    #for row in dfAgg:
+        # cur.execute( sqlInsert, (row.language, row.total))
+    
+    #cur.commit()
+##except psycopg2.DatabaseError, e:
+##    
+##    if con:
+##        con.rollback()
+##    
+##    print 'Error %s' % e    
+##    #sys.exit(1)
+##    
+##    
+##finally:
+##    
+##    if con:
+##        con.close()
+
 
 print "Total query runtime: %d seconds" % (time.time() - time_start)
 

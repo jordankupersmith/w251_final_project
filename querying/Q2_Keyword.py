@@ -55,5 +55,10 @@ dfAgg.orderBy( dfAgg.total.desc()).show()
 print "Total query runtime: %d seconds" % (time.time() - time_start)
 
 # do something with results...
+### OUTPUT TABLE/FILE NAME - MAX LENGTH IS 63 CHARS###
+### (assumes there are at least 2 dates) ###
+#Sum_of_Views_Per_Language_From
+output_table_name = "Query2_" + page_name + "_From_" + str(dates_to_query[0]) \
+                    + "_to_" + str(dates_to_query[-1])
 
-# to go back to an RDD, just go like rddNew = mydf_sql.rdd
+dfAgg.toPandas().to_csv('/data/spark_queries/outputFiles/' + output_table_name + '.csv', header=True)

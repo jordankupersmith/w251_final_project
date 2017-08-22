@@ -10,7 +10,7 @@ slcli vs create --datacenter=sjc01 --hostname=wiki4 --domain=mnelson.ca --billin
 
 ## Node Information
 
-37292553  wiki1          198.23.108.53    10.90.61.249  sjc01 YDv86lrb <br>
+37292553  wiki1          198.23.108.53    10.90.61.249   sjc01  YDv86lrb <br>
 37288917  wiki2          198.23.108.52    10.90.61.241   sjc01  NAT2exYb <br>
 37289001  wiki3          198.23.108.54    10.90.61.242   sjc01  BW2ADnul <br>
 37289031  wiki4          198.23.108.51    10.90.61.243   sjc01  ZymD36km <br>
@@ -373,7 +373,7 @@ CREATE TABLE wikikeyspace.t20151023( language text, page_name text PRIMARY KEY, 
  https://github.com/TargetHolding/pyspark-cassandra<br>
 
 #### This should be how you run this script ######<br>
-	 $SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
+$SPARK_HOME/bin/spark-submit --packages TargetHolding/pyspark-cassandra:0.3.5 --conf spark.cassandra.connection.host=10.90.61.249 /data/spark_queries/matt_query2.py
 <br>
 
 ### or to load the pyspark shell ###
