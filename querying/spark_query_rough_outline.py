@@ -25,6 +25,7 @@ def query_first_then_join(sc):
 	.map(lambda r: (r["col-a"], 1)
 	.reduceByKey(lambda a, b: a + b)
 	.collect()
+    
 
     # Join (Regular RDD joins)
     # Joining Two Tables
