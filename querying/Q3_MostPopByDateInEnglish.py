@@ -14,11 +14,6 @@ conf = SparkConf() \
 sc = pyspark_cassandra.CassandraSparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
-# 7 random dates
-
-#page_name = "Donald_Trump"
-#page_name = "Prince_(musician)"
-#page_name = "Main[_]Page"
 # this is a single date query, only use one date!!
 dates_to_query = [20170120]#, 20160831, 20170120, 20161120, 20151202, 20151225, 20160515, 20160518, 20160619, 20170526]
 tables_to_query = ["t"+str(i) for i in dates_to_query]
@@ -26,6 +21,7 @@ temp_table = "Q3Temp1"
 
 time_start = time.time()
 results = []
+language = 'en'
 for i, date_table in enumerate(tables_to_query):
 
     mydf = sqlContext.read.format("org.apache.spark.sql.cassandra").\
@@ -35,7 +31,8 @@ for i, date_table in enumerate(tables_to_query):
     #query = "SELECT SUM(view_count) as viewCount FROM " + temp_table + " WHERE page_name LIKE '" + page_name + "'"
 
     #query = "SELECT * FROM " + temp_table + " WHERE page_name LIKE '%" + page_name + "%'"
-    query = "SELECT page_name, language, view_count FROM " + temp_table + " ORDER BY view_count desc"
+    query = "SELECT page_name, language, view_count FROM " + temp_table + \
+            " WHERE language = '" + language + "' ORDER BY view_count desc"
     print "query:\n", query
     mydf_sql = sqlContext.sql( query)
 
@@ -66,5 +63,5 @@ output_table_name = "Query3_MostPopular_On_" + str(dates_to_query[0])
 mydf_sql.limit(50).toPandas().to_csv('/data/spark_queries/outputFiles/' + output_table_name + '.csv', header=True, index=True, encoding='utf-8')
 
 
-~                                                                                                       
-~                       
+                                                                                                       
+                       

@@ -23,9 +23,9 @@ conf = SparkConf() \
 sc = pyspark_cassandra.CassandraSparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
-# 7 random dates
-#dates_to_query = [20160101, 20160102, 20160103, 20160104, 20160105, 20160106, 20160107]
-dates_to_query = [20151225, 20151226, 20151227, 20151228, 20151229, 20151230, 20151231]
+# 7 dates
+#dates_to_query = [20151225, 20151226, 20151227, 20151228, 20151229, 20151230, 20151231]
+dates_to_query = [20160108, 20160109, 20160110, 20160111, 20160112, 20160113, 20160114]
 
 tables_to_query = ["t"+str(i) for i in dates_to_query]
 
